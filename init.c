@@ -10,9 +10,13 @@ void ls(const char *d)
 {
     printf("ls %s -> ", d);
     DIR *here = opendir(d);
-    struct dirent *entry;
-    while((entry = readdir(here))){
-        printf("%s ", entry->d_name);
+    if(here){
+        struct dirent *entry;
+        while((entry = readdir(here))){
+            printf("%s ", entry->d_name);
+    }
+    }else{
+        printf("ls %s -> not found", d);
     }
     printf("\n");
 }
@@ -27,8 +31,14 @@ void create_and_mount(const char *dev)
 }
 
 int
-main (int argc __attribute__((unused)), char *argv[] __attribute__((unused)))
+main (int argc, char *argv[])
 {
+
+    printf("initramfs (%d): ", argc);
+    for (int i = 0; i < argc; ++i)
+        printf("%s", argv[i]);
+    printf("\n");
+    /*
     ls(".");
 
     create_and_mount("/dev/sda");
@@ -71,5 +81,9 @@ main (int argc __attribute__((unused)), char *argv[] __attribute__((unused)))
     ls(".");
 
     execl("/sbin/init", "/sbin/init", NULL);
-    
+*/
+    ls(".");
+    ls("genode");
+    printf("chdir genode: %d\n", chdir("genode"));
+    ls(".");
 }
