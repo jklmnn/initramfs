@@ -1,16 +1,17 @@
 #include <unistd.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
+#include <stdio.h>
 
 int
 main (int argc __attribute__((unused)), char *argv[] __attribute__((unused)))
 {
-    mknod ("/dev/sda5", S_IFBLK|0644, 8 << 8 | 5);
-    mount ("/dev/sda5", "/root", "ext4", MS_RDONLY, NULL);
-    unlink ("/dev/sda5");
-    if (chdir("/root") != 0) return -1;
-    mount(".", "/", NULL, MS_MOVE, NULL);
-    if (chroot(".") != 0) return -1;
-    if (chdir("/") != 0) return -1;
-    execl("/sbin/init", "/sbin/init", NULL);
+    char *args = "core";
+    printf("loading Genode on Linux\n");
+    if (chdir("/genode")){
+        perror("failed to chdir into /genode");
+        return 1;
+    }
+    if(execve("core", &args, NULL)){
+        perror("failed to start core");
+        return 1;
+    }
 }
